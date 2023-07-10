@@ -4,6 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+import requests
 import csv
 import time
 import unicodedata
@@ -85,6 +86,25 @@ def save_to_csv(data, csv_file):
 
         print(f"Scraped data saved to '{csv_file}'.")
 
+
+# Rotating proxies
+with open("valid_proxies.txt", "r") as f:
+    proxies = f.read().split("\n")
+
+counter = 0
+
+for i in range(len(proxies)):
+    try:
+        print(f"Using the proxy: {proxies[counter]}")
+        res = requests.get(i, proxies={"http": proxies[counter], "https": proxies[counter]})
+        print(res.status_code)
+
+    except:
+        print("Failed")
+
+    finally:
+        counter += 1
+
 # Create a Chrome WebDriver instance
 driver = webdriver.Chrome(PATH)
 
@@ -97,7 +117,10 @@ wait.until(EC.element_to_be_clickable((By.XPATH, "//input[contains(@class, 'sear
 
 # Find the search bar and enter the search query
 search_bar = driver.find_element(By.XPATH, "//input[contains(@class, 'search-global-typeahead__input')]")
-search_bar.send_keys("ceo Australia")
+
+
+# ---->SEARCH CRITERIA<---- 
+search_bar.send_keys("---->SEARCH CRITERIA<----")
 search_bar.send_keys(Keys.ENTER)
 
 # Set the wait time in seconds
